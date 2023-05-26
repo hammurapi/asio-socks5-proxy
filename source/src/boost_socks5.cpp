@@ -224,7 +224,7 @@ appropriate for the request type.
 	{
 		auto self(shared_from_this());
 		asio::async_connect(out_socket_, endpoints,
-			[this, self](const std::error_code& ec)
+			[this, self](const std::error_code& ec, const tcp::endpoint& endpoint)
 			{
 				if (!ec)
 				{
@@ -437,7 +437,7 @@ int main(int argc, char* argv[])
 	{
 		if (argc != 2)
 		{
-			std::cout << "Usage: boost_socks5 <config_file>" << std::endl;
+			std::cout << "Usage: " << argv[0] << " <config_file>" << std::endl;
 			return 1;
 		}
 

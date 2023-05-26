@@ -11,7 +11,7 @@
 #include <utility>
 #include <asio.hpp>
 #include <fstream>
-#include "config_reader.hpp"
+#include "config-reader.hpp"
 
 using asio::ip::tcp;
 

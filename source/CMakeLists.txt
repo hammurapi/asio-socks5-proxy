@@ -69,5 +69,5 @@ if( WIN32 )
 	install( FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION bin OPTIONAL )
 endif()
 
-install( FILES src/boost_socks5.conf DESTINATION bin )
+install( FILES src/socks5-proxy.conf DESTINATION bin )
 

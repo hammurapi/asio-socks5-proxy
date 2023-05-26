@@ -1,0 +1,47 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "version.h"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+1 VERSIONINFO
+ FILEVERSION VER_FILEVERSION
+ PRODUCTVERSION VER_PRODUCTVERSION
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x0L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName", VER_COMPANYNAME_STR
+#ifdef WIN64
+            VALUE "FileDescription", "asio-socks5-proxy (x64)"
+#else
+            VALUE "FileDescription", "asio-socks5-proxy (x86)"
+#endif
+
+            VALUE "FileVersion", VER_FILEVERSION_STR
+            VALUE "InternalName", "asio-socks5-proxy"
+            VALUE "LegalCopyright", "Copyright (C) 2023 - hammurapi"
+            VALUE "OriginalFilename", "asio-socks5-proxy.exe"
+            VALUE "ProductName", VER_PRODUCTNAME_STR
+            VALUE "ProductVersion", VER_PRODUCTVERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+

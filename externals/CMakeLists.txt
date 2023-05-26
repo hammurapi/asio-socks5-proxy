@@ -1,3 +1,8 @@
 cmake_minimum_required(VERSION 3.2)
 
 add_subdirectory( asio EXCLUDE_FROM_ALL )
+
+set( SPDLOG_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set( SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set( SPDLOG_BUILD_BENCH OFF CACHE BOOL "" FORCE)
+add_subdirectory( spdlog EXCLUDE_FROM_ALL )

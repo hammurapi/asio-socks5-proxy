@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(asio-socks5-proxy)
+project(socks-proxy)
 
 #include_directories(include)
 include_directories(src)
@@ -69,5 +69,5 @@ if( WIN32 )
 	install( FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION bin OPTIONAL )
 endif()
 
-install( FILES src/socks5-proxy.conf DESTINATION bin )
+install( FILES src/socks-proxy.conf DESTINATION bin )
 

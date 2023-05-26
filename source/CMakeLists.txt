@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(sidis-pduapi)
+project(asio-socks5-proxy)
 
 #include_directories(include)
 include_directories(src)
@@ -55,3 +55,19 @@ target_include_directories( ${PROJECT_NAME} PRIVATE res)
 
 #file(GLOB PUBLIC_HEADERS "include/*.h")
 #set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADERS}")
+
+#Set the location for library installation -- i.e., /usr/lib in this case
+# not really necessary in this example. Use "sudo make install" to apply
+install( TARGETS ${PROJECT_NAME} 
+	RUNTIME DESTINATION bin
+	ARCHIVE DESTINATION lib
+	LIBRARY DESTINATION bin
+	PUBLIC_HEADER DESTINATION include
+)
+
+if( WIN32 )
+	install( FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION bin OPTIONAL )
+endif()
+
+install( FILES src/boost_socks5.conf DESTINATION bin )
+

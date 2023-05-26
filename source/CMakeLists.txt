@@ -43,7 +43,7 @@ endif()
 #Generate the shared library from the sources
 add_executable( ${PROJECT_NAME} ${SOURCES} )
 
-target_link_libraries( ${PROJECT_NAME} PUBLIC asio )
+target_link_libraries( ${PROJECT_NAME} PUBLIC asio spdlog )
 
 # fixup export names for MINGW32
 if( (MINGW) AND ( CMAKE_SIZEOF_VOID_P EQUAL 4 ) )

@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef HTTP_SERVER2_IO_SERVICE_POOL_HPP
-#define HTTP_SERVER2_IO_SERVICE_POOL_HPP
+#ifndef HTTP_SERVER2_io_context_POOL_HPP
+#define HTTP_SERVER2_io_context_POOL_HPP
 
 #include <asio.hpp>
 #include <list>
@@ -55,4 +55,4 @@ private:
 } // namespace server2
 } // namespace http
 
-#endif // HTTP_SERVER2_IO_SERVICE_POOL_HPP
+#endif // HTTP_SERVER2_io_context_POOL_HPP

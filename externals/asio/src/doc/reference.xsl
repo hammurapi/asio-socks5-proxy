@@ -253,10 +253,10 @@
          select="substring-after($name, 'boost::system::')"/>
       </xsl:call-template>
     </xsl:when>
-    <xsl:when test="contains($name, 'boost::asio::error::')">
+    <xsl:when test="contains($name, 'asio::error::')">
       <xsl:call-template name="make-id">
         <xsl:with-param name="name"
-         select="concat(substring-before($name, 'boost::asio::error::'), substring-after($name, 'boost::asio::error::'))"/>
+         select="concat(substring-before($name, 'asio::error::'), substring-after($name, 'asio::error::'))"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="contains($name, '::')">

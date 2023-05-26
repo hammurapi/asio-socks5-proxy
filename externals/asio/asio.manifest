@@ -782,7 +782,7 @@
 /doc/asio/reference/basic_io_object/get_implementation/overload1.html
 /doc/asio/reference/basic_io_object/get_implementation/overload2.html
 /doc/asio/reference/basic_io_object/get_io_context.html
-/doc/asio/reference/basic_io_object/get_io_service.html
+/doc/asio/reference/basic_io_object/get_io_context.html
 /doc/asio/reference/basic_io_object/get_service/
 /doc/asio/reference/basic_io_object/get_service.html
 /doc/asio/reference/basic_io_object/get_service/overload1.html
@@ -3701,7 +3701,7 @@
 /doc/asio/reference/io_context/wrap.html
 /doc/asio/reference/IoControlCommand.html
 /doc/asio/reference/IoObjectService.html
-/doc/asio/reference/io_service.html
+/doc/asio/reference/io_context.html
 /doc/asio/reference/ip__address/
 /doc/asio/reference/ip__address/address/
 /doc/asio/reference/ip__address/address.html
@@ -6208,8 +6208,8 @@
 /include/asio/impl/write.hpp
 /include/asio/io_context.hpp
 /include/asio/io_context_strand.hpp
-/include/asio/io_service.hpp
-/include/asio/io_service_strand.hpp
+/include/asio/io_context.hpp
+/include/asio/io_context_strand.hpp
 /include/asio/ip/
 /include/asio/ip/address.hpp
 /include/asio/ip/address_v4.hpp

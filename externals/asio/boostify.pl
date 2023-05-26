@@ -126,8 +126,8 @@ sub copy_source_file
     $line =~ s/[\\@]ref boost_bind/boost::bind()/g;
     if ($from =~ /.*\.txt$/)
     {
-      $line =~ s/[\\@]ref async_read/boost::asio::async_read()/g;
-      $line =~ s/[\\@]ref async_write/boost::asio::async_write()/g;
+      $line =~ s/[\\@]ref async_read/asio::async_read()/g;
+      $line =~ s/[\\@]ref async_write/asio::async_write()/g;
     }
     if ($line =~ /asio_detail_posix_thread_function/)
     {
@@ -182,7 +182,7 @@ sub copy_source_file
     {
       if ($is_qbk)
       {
-        print_line($output, $1 . "} } // namespace boost::asio", $from, $lineno);
+        print_line($output, $1 . "} } // namespace asio", $from, $lineno);
       }
       else
       {
@@ -264,9 +264,9 @@ sub copy_source_file
       {
         $line =~ s/asio::thread/boost::thread/g;
       }
-      if (!($line =~ /boost::asio::/))
+      if (!($line =~ /asio::/))
       {
-        $line =~ s/asio::/boost::asio::/g;
+        $line =~ s/asio::/asio::/g;
       }
       print_line($output, $line, $from, $lineno);
     }
@@ -274,7 +274,7 @@ sub copy_source_file
     {
       if ($is_test)
       {
-        print_line($output, $1 . "boost::asio::detail::thread" . $2, $from, $lineno);
+        print_line($output, $1 . "asio::detail::thread" . $2, $from, $lineno);
       }
       else
       {
@@ -288,13 +288,13 @@ sub copy_source_file
     }
     elsif ($line =~ /std::error_code/)
     {
-      $line =~ s/std::error_code/boost::system::error_code/g;
-      $line =~ s/asio::/boost::asio::/g if !$is_xsl;
+      $line =~ s/std::error_code/std::error_code/g;
+      $line =~ s/asio::/asio::/g if !$is_xsl;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /ec\.assign\(0, ec\.category\(\)\)/)
     {
-      $line =~ s/ec\.assign\(0, ec\.category\(\)\)/ec = boost::system::error_code()/g;
+      $line =~ s/ec\.assign\(0, ec\.category\(\)\)/ec = std::error_code()/g;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /^} \/\/ namespace std/ && !$is_coroutine_related && !$is_hash_related)
@@ -302,18 +302,18 @@ sub copy_source_file
       print_line($output, "} // namespace system", $from, $lineno);
       print_line($output, "} // namespace boost", $from, $lineno);
     }
-    elsif ($line =~ /asio::/ && !($line =~ /boost::asio::/))
+    elsif ($line =~ /asio::/ && !($line =~ /asio::/))
     {
-      $line =~ s/asio::error_code/boost::system::error_code/g;
+      $line =~ s/asio::error_code/std::error_code/g;
       $line =~ s/asio::error_category/boost::system::error_category/g;
       $line =~ s/asio::system_category/boost::system::system_category/g;
       $line =~ s/asio::system_error/boost::system::system_error/g;
-      $line =~ s/asio::/boost::asio::/g if !$is_xsl;
+      $line =~ s/asio::/asio::/g if !$is_xsl;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /using namespace asio/)
     {
-      $line =~ s/using namespace asio/using namespace boost::asio/g;
+      $line =~ s/using namespace asio/using namespace asio/g;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /asio_handler_alloc_helpers/)

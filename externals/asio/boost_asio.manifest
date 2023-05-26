@@ -502,8 +502,8 @@
 /boost/asio/impl/write.hpp
 /boost/asio/io_context.hpp
 /boost/asio/io_context_strand.hpp
-/boost/asio/io_service.hpp
-/boost/asio/io_service_strand.hpp
+/boost/asio/io_context.hpp
+/boost/asio/io_context_strand.hpp
 /boost/asio/ip/
 /boost/asio/ip/address.hpp
 /boost/asio/ip/address_v4.hpp
@@ -1850,7 +1850,7 @@
 /doc/html/boost_asio/reference/basic_io_object/get_implementation/overload1.html
 /doc/html/boost_asio/reference/basic_io_object/get_implementation/overload2.html
 /doc/html/boost_asio/reference/basic_io_object/get_io_context.html
-/doc/html/boost_asio/reference/basic_io_object/get_io_service.html
+/doc/html/boost_asio/reference/basic_io_object/get_io_context.html
 /doc/html/boost_asio/reference/basic_io_object/get_service/
 /doc/html/boost_asio/reference/basic_io_object/get_service.html
 /doc/html/boost_asio/reference/basic_io_object/get_service/overload1.html
@@ -4743,7 +4743,7 @@
 /doc/html/boost_asio/reference/io_context/wrap.html
 /doc/html/boost_asio/reference/IoControlCommand.html
 /doc/html/boost_asio/reference/IoObjectService.html
-/doc/html/boost_asio/reference/io_service.html
+/doc/html/boost_asio/reference/io_context.html
 /doc/html/boost_asio/reference/ip__address/
 /doc/html/boost_asio/reference/ip__address/address/
 /doc/html/boost_asio/reference/ip__address/address.html

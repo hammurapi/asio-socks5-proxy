@@ -1,7 +1,7 @@
 # BOOST_SOCKS5 Proxy Server
 
 ## Description
-This is simple realization of socks5 proxy server according to the [RFC 1928](https://www.ietf.org/rfc/rfc1928.txt) using `boost::asio` library. The server uses async socket calls for data forwarding and io_service for message processing. Currently, boost_socks5 proxy server works only in `NO AUTHENTICATION REQUIRED` mode.
+This is simple realization of socks5 proxy server according to the [RFC 1928](https://www.ietf.org/rfc/rfc1928.txt) using `asio` library. The server uses async socket calls for data forwarding and io_context for message processing. Currently, boost_socks5 proxy server works only in `NO AUTHENTICATION REQUIRED` mode.
 
 ## Build
 The proxy server build was tested with boost version 1.58. However, earlier versions of boost will probably work as well.

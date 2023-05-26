@@ -2070,7 +2070,7 @@
     asio::steady_timer my_timer(my_io_context);
     ``[br]
 
-  * The previously deprecated `get_io_context` and `get_io_service`
+  * The previously deprecated `get_io_context` and `get_io_context`
     member functions have now been removed.
 
   * The previously deprecated service template parameters, and the
@@ -2422,30 +2422,30 @@
 
   * A `system_executor` class has been added as a default executor.
 
-  * The `io_service` class is now derived from `execution_context` and
+  * The `io_context` class is now derived from `execution_context` and
     implements the executor type requirements in its nested `executor_type`
     class. The member functions `dispatch()`, `post()`, `defer()` and `wrap()`
-    have been deprecated. The `io_service::work` class has been deprecated.
+    have been deprecated. The `io_context::work` class has been deprecated.
 
-  * The `io_service` member function `reset()` has been renamed to `restart()`.
+  * The `io_context` member function `reset()` has been renamed to `restart()`.
     The old name is retained for backward compatibility but has been
     deprecated.
 
   * The `make_service<>()` function is now used to add a new service to an
-    execution context such as an `io_service`. The `add_service()` function has
+    execution context such as an `io_context`. The `add_service()` function has
     been deprecated.
 
   * A new `strand<>` template has been added to allow strand functionality to
     be used with generic executor types.
 
   * I/O objects (such as sockets and timers) now provide access to their
-    associated `io_service` via a `context()` member function. The
-    `get_io_service()` member function is deprecated.
+    associated `io_context` via a `context()` member function. The
+    `get_io_context()` member function is deprecated.
 
   * All asynchronous operations and executor operations now support move-only
-    handlers. However, the deprecated `io_service::post()`,
-    `io_service::dispatch()`, `io_service::strand::post()` and
-    `io_service::strand::dispatch()` functions still require copyable handlers.
+    handlers. However, the deprecated `io_context::post()`,
+    `io_context::dispatch()`, `io_context::strand::post()` and
+    `io_context::strand::dispatch()` functions still require copyable handlers.
 
   * Waitable timer objects are now movable.
 
@@ -2567,7 +2567,7 @@
   made available when including the `asio.hpp` convenience header.
 
 * Explicitly marked `asio::strand` as deprecated. Use
-  `asio::io_service::strand` instead.
+  `asio::io_context::strand` instead.
 
 [heading Asio 1.10.4]
 
@@ -2609,16 +2609,16 @@
 * Fixed `asio::spawn()` to work correctly with new Boost.Coroutine interface.
 
 * Ensured that incomplete `asio::spawn()` coroutines are correctly unwound when
-  cleaned up by the `io_service` destructor.
+  cleaned up by the `io_context` destructor.
 
 * Fixed delegation of continuation hook for handlers produced by
-  `io_service::wrap()` and `strand::wrap()`.
+  `io_context::wrap()` and `strand::wrap()`.
 
 * Changed the Windows I/O completion port backend to use `ConnectEx`, if
   available, for connection-oriented IP sockets.
 
-* Changed the `io_service` backend for non-Windows (and non-IOCP Windows)
-  platforms to use a single condition variable per `io_service` instance.
+* Changed the `io_context` backend for non-Windows (and non-IOCP Windows)
+  platforms to use a single condition variable per `io_context` instance.
   This addresses a potential race condition when `run_one()` is used from
   multiple threads.
 
@@ -2662,7 +2662,7 @@
   language extensions be enabled. Due to the restricted facilities exposed by
   the Windows Runtime API, the port also comes with the following caveats:
 
-  * The core facilities such as the `io_service`, `strand`, buffers, composed
+  * The core facilities such as the `io_context`, `strand`, buffers, composed
     operations, timers, etc., should all work as normal.
 
   * For sockets, only client-side TCP is supported.
@@ -2699,7 +2699,7 @@
   handler.
 
 * Fixed a Windows-specific regression (introduced in 1.10.0) that occurs when
-  multiple threads are running an `io_service`. When the bug occurs, the result
+  multiple threads are running an `io_context`. When the bug occurs, the result
   of an asynchronous operation (error and bytes tranferred) is incorrectly
   discarded and zero values used instead. For TCP sockets this results in
   spurious end-of-file notifications.
@@ -2860,7 +2860,7 @@
   objects.
 
 * Fixed a problem with lost thread wakeups that can occur when making
-  concurrent calls to `run()` and `poll()` on the same `io_service` object.
+  concurrent calls to `run()` and `poll()` on the same `io_context` object.
 
 * Fixed implementation of asynchronous connect operation so that it can cope
   with spurious readiness notifications from the reactor.
@@ -2885,7 +2885,7 @@
   `swprintf` signature in recent versions of MinGW.
 
 * Fixed a deadlock that can occur on Windows when shutting down a pool of
-  `io_service` threads due to running out of work.
+  `io_context` threads due to running out of work.
 
 * Changed UNIX domain socket example to treat errors from `accept` as non-fatal.
 
@@ -2904,7 +2904,7 @@
 * Changed to use [^gcc]'s atomic builtins on ARM CPUs, when available.
 
 * Changed strand destruction to be a no-op, to allow strand objects to be
-  destroyed after their associated `io_service` has been destroyed.
+  destroyed after their associated `io_context` has been destroyed.
 
 * Added support for some newer versions of glibc which provide the
   `epoll_create1()` function but always fail with ENOSYS.
@@ -2936,7 +2936,7 @@
 * Added support for [^g++] 4.7 when compiling in C++11 mode.
 
 * Fixed a problem where `signal_set` handlers were not being delivered when
-  the `io_service` was constructed with a `concurrency_hint` of 1.
+  the `io_context` was constructed with a `concurrency_hint` of 1.
 
 [heading Asio 1.8.0]
 
@@ -2959,7 +2959,7 @@
 
 * Fixed a regression in `buffered_write_stream`.
 
-* Fixed a non-paged pool "leak" on Windows when an `io_service` is repeatedly
+* Fixed a non-paged pool "leak" on Windows when an `io_context` is repeatedly
   run without anything to do.
 
 * Reverted earlier change to allow some speculative operations to be performed
@@ -2982,7 +2982,7 @@
   * Improving locality of reference by performing an `epoll_reactor`'s I/O
     operation immediately before the corresponding handler is called. This also
     improves scalability across CPUs when multiple threads are running the
-    `io_service`.
+    `io_context`.
 
   * Specialising asynchronous read and write operations for buffer sequences
     that are arrays (`boost::array` or `std::array`) of exactly two buffers.
@@ -3046,7 +3046,7 @@
 
 * On Windows, ensured the count of outstanding work is decremented for
   abandoned operations (i.e. operations that are being cleaned up within the
-  `io_service` destructor).
+  `io_context` destructor).
 
 * Fixed behaviour of zero-length reads and writes in the new SSL implementation.
 
@@ -3088,7 +3088,7 @@
   ports, POSIX descriptors and Windows handles.
 
 * Added support for the `fork()` system call. Programs that use `fork()` must
-  call `io_service.notify_fork()` at the appropriate times. Two new examples
+  call `io_context.notify_fork()` at the appropriate times. Two new examples
   have been added showing how to use this feature.
 
 * Cleaned up the handling of errors reported by the `close()` system call. In
@@ -3097,7 +3097,7 @@
   If any other error occurs, assume the descriptor is closed.
 
 * The kqueue flag `EV_ONESHOT` seems to cause problems on some versions of Mac
-  OS X, with the `io_service` destructor getting stuck inside the `close()`
+  OS X, with the `io_context` destructor getting stuck inside the `close()`
   system call. Changed the kqueue backend to use `EV_CLEAR` instead.
 
 * Changed exception reporting to include the function name in exception `what()`
@@ -3225,8 +3225,8 @@
 
 * Added support for sequenced packet sockets (`SOCK_SEQPACKET`).
 
-* Added a new `io_service::stopped()` function that can be used to determine
-  whether the `io_service` has stopped (i.e. a `reset()` call is needed prior
+* Added a new `io_context::stopped()` function that can be used to determine
+  whether the `io_context` has stopped (i.e. a `reset()` call is needed prior
   to any further calls to `run()`, `run_one()`, `poll()` or `poll_one()`).
 
 * Reduced the copying of handler function objects.
@@ -3253,8 +3253,8 @@
   capabilities, you should also include 'asio/ssl/impl/src.hpp` in one source
   file in your program.
 
-* Removed the deprecated member functions named `io_service()`. The
-  `get_io_service()` member functions should be used instead.
+* Removed the deprecated member functions named `io_context()`. The
+  `get_io_context()` member functions should be used instead.
 
 * Removed the deprecated typedefs `resolver_query` and `resolver_iterator` from
   the `ip::tcp`, `ip::udp` and `ip::icmp` classes.
@@ -3278,7 +3278,7 @@
 [heading Asio 1.4.7]
 
 * Fixed a problem on kqueue-based platforms where a `deadline_timer` may
-  never fire if the `io_service` is running in a background thread.
+  never fire if the `io_context` is running in a background thread.
 
 * Fixed a const-correctness issue that prevented valid uses of
   `has_service<>` from compiling.
@@ -3567,8 +3567,8 @@
   (meaning that it is now permitted to perform concurrent synchronous
   operations on an individual socket, if supported by the OS).
 
-* Reactor-based `io_service` implementations now use lazy initialisation to
-  reduce the memory usage of an `io_service` object used only as a message
+* Reactor-based `io_context` implementations now use lazy initialisation to
+  reduce the memory usage of an `io_context` object used only as a message
   queue.
 
 [heading Asio 1.2.0]
@@ -3597,7 +3597,7 @@
   user-defined function object for locating message boundaries.
 
 * Added an experimental two-lock queue (enabled by defining
-  `(BOOST_)ASIO_ENABLE_TWO_LOCK_QUEUE`) that may provide better `io_service`
+  `(BOOST_)ASIO_ENABLE_TWO_LOCK_QUEUE`) that may provide better `io_context`
   scalability across many processors.
 
 * Various fixes, performance improvements, and more complete coverage of the

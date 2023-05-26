@@ -34,13 +34,13 @@ namespace detail
     typedef typename service_type::implementation_type implementation_type;
 
     template <typename T, typename U>
-    static auto asio_service_has_move_eval(T* t, U* u)
+    static auto asio_context_has_move_eval(T* t, U* u)
       -> decltype(t->move_construct(*u, *u), char());
-    static char (&asio_service_has_move_eval(...))[2];
+    static char (&asio_context_has_move_eval(...))[2];
 
   public:
     static const bool value =
-      sizeof(asio_service_has_move_eval(
+      sizeof(asio_context_has_move_eval(
         static_cast<service_type*>(0),
         static_cast<implementation_type*>(0))) == 1;
   };
@@ -91,7 +91,7 @@ public:
    * @return A reference to the io_context object that the I/O object will use
    * to dispatch handlers. Ownership is not transferred to the caller.
    */
-  asio::io_context& get_io_service()
+  asio::io_context& get_io_context()
   {
     return service_.get_io_context();
   }
@@ -205,7 +205,7 @@ public:
     return service_->get_io_context();
   }
 
-  asio::io_context& get_io_service()
+  asio::io_context& get_io_context()
   {
     return service_->get_io_context();
   }

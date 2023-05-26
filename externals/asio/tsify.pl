@@ -391,7 +391,7 @@ sub copy_source_file
         print_line($output, $1 . "std::thread" . $2, $from, $lineno);
       }
     }
-    elsif ($line =~ /asio::/ && !($line =~ /boost::asio::/))
+    elsif ($line =~ /asio::/ && !($line =~ /asio::/))
     {
       $line =~ s/asio::error_code/std::error_code/g;
       $line =~ s/asio::error_category/std::error_category/g;

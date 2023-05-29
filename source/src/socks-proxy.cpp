@@ -48,14 +48,13 @@ inline void write_log( int prefix, short verbose, short verbose_level, int sessi
 
 class Session : public std::enable_shared_from_this<Session> {
 public:
-    Session( tcp::socket in_socket, unsigned session_id, size_t buffer_size, short verbose )
+    Session( tcp::socket in_socket, unsigned session_id, size_t buffer_size )
         : in_socket_( std::move( in_socket ) ),
         out_socket_( in_socket.get_executor() ),
         resolver( in_socket.get_executor() ),
         in_buf_( buffer_size ),
         out_buf_( buffer_size ),
-        session_id_( session_id ),
-        verbose_( verbose ) {
+        session_id_( session_id ) {
     }
 
     void start() {
@@ -70,25 +69,25 @@ private:
                                  [this, self]( std::error_code ec, std::size_t length ) {
                                      if( !ec ) {
                                          /*
-                                              The client connects to the server, and sends a version
-                                              identifier/method selection message:
+                                                     The client connects to the server, and sends a version
+                                                     identifier/method selection message:
 
-                                              +----+----------+----------+
-                                              |VER | NMETHODS | METHODS  |
-                                              +----+----------+----------+
-                                              | 1  |    1     | 1 to 255 |
-                                              +----+----------+----------+
+                                                     +----+----------+----------+
+                                                     |VER | NMETHODS | METHODS  |
+                                                     +----+----------+----------+
+                                                     | 1  |    1     | 1 to 255 |
+                                                     +----+----------+----------+
 
-                                              The values currently defined for METHOD are:
+                                                     The values currently defined for METHOD are:
 
-                                              o  X'00' NO AUTHENTICATION REQUIRED
-                                              o  X'01' GSSAPI
-                                              o  X'02' USERNAME/PASSWORD
-                                              o  X'03' to X'7F' IANA ASSIGNED
-                                              o  X'80' to X'FE' RESERVED FOR PRIVATE METHODS
-                                              o  X'FF' NO ACCEPTABLE METHODS
+                                                     o  X'00' NO AUTHENTICATION REQUIRED
+                                                     o  X'01' GSSAPI
+                                                     o  X'02' USERNAME/PASSWORD
+                                                     o  X'03' to X'7F' IANA ASSIGNED
+                                                     o  X'80' to X'FE' RESERVED FOR PRIVATE METHODS
+                                                     o  X'FF' NO ACCEPTABLE METHODS
 
-                                              */
+                                                     */
                                          if( length < 3 || in_buf_[0] != 0x05 ) {
                                              // write_log( 1, 0, verbose_, session_id_, "SOCKS5 handshake request is invalid. Closing session." );
                                              spdlog::error( "(session: {0}) SOCKS5 handshake request is invalid. Closing session.", session_id_ );
@@ -138,34 +137,34 @@ private:
                                  [this, self]( std::error_code ec, std::size_t length ) {
                                      if( !ec ) {
                                          /*
-                                              The SOCKS request is formed as follows:
+                                                     The SOCKS request is formed as follows:
 
-                                              +----+-----+-------+------+----------+----------+
-                                              |VER | CMD |  RSV  | ATYP | DST.ADDR | DST.PORT |
-                                              +----+-----+-------+------+----------+----------+
-                                              | 1  |  1  | X'00' |  1   | Variable |    2     |
-                                              +----+-----+-------+------+----------+----------+
+                                                     +----+-----+-------+------+----------+----------+
+                                                     |VER | CMD |  RSV  | ATYP | DST.ADDR | DST.PORT |
+                                                     +----+-----+-------+------+----------+----------+
+                                                     | 1  |  1  | X'00' |  1   | Variable |    2     |
+                                                     +----+-----+-------+------+----------+----------+
 
-                                              Where:
+                                                     Where:
 
-                                              o  VER    protocol version: X'05'
-                                              o  CMD
-                                              o  CONNECT X'01'
-                                              o  BIND X'02'
-                                              o  UDP ASSOCIATE X'03'
-                                              o  RSV    RESERVED
-                                              o  ATYP   address type of following address
-                                              o  IP V4 address: X'01'
-                                              o  DOMAINNAME: X'03'
-                                              o  IP V6 address: X'04'
-                                              o  DST.ADDR       desired destination address
-                                              o  DST.PORT desired destination port_ in network octet
-                                              order
+                                                     o  VER    protocol version: X'05'
+                                                     o  CMD
+                                                     o  CONNECT X'01'
+                                                     o  BIND X'02'
+                                                     o  UDP ASSOCIATE X'03'
+                                                     o  RSV    RESERVED
+                                                     o  ATYP   address type of following address
+                                                     o  IP V4 address: X'01'
+                                                     o  DOMAINNAME: X'03'
+                                                     o  IP V6 address: X'04'
+                                                     o  DST.ADDR       desired destination address
+                                                     o  DST.PORT desired destination port_ in network octet
+                                                     order
 
-                                              The SOCKS server will typically evaluate the request based on source
-                                              and destination addresses, and return one or more reply messages, as
-                                              appropriate for the request type.
-                                              */
+                                                     The SOCKS server will typically evaluate the request based on source
+                                                     and destination addresses, and return one or more reply messages, as
+                                                     appropriate for the request type.
+                                                     */
                                          if( length < 5 || in_buf_[0] != 0x05 || in_buf_[1] != 0x01 ) {
                                              //  write_log( 1, 0, verbose_, session_id_, "SOCKS5 request is invalid. Closing session." );
 
@@ -236,7 +235,7 @@ private:
                                     // what << "connected to " << remote_host_ << ":" << remote_port_;
                                     // write_log( 0, 1, verbose_, session_id_, what.str() );
 
-                                    spdlog::error( "(session: {0}) connected to {1}:{2}", session_id_, remote_host_, remote_port_ );
+                                    spdlog::info( "(session: {0}) connected to {1}:{2}", session_id_, remote_host_, remote_port_ );
                                     write_socks5_response();
                                 } else {
                                     // std::ostringstream what;
@@ -317,13 +316,13 @@ private:
                                              // std::ostringstream what;
                                              // what << "--> " << std::to_string( length ) << " bytes";
                                              // write_log( 0, 2, verbose_, session_id_, what.str() );
-                                             spdlog::info( "(session: {0}) --> {1} bytes", session_id_, length );
+                                             spdlog::debug( "(session: {0}) --> {1} bytes", session_id_, length );
 
                                              do_write( 1, length );
                                          } else // if (ec != asio::error::eof)
                                          {
                                              // write_log( 2, 1, verbose_, session_id_, "closing session. Client socket read error", ec.message() );
-                                             spdlog::error( "(session: {0}) closing session. Client socket read error {1}", session_id_, ec.message() );
+                                             spdlog::warn( "(session: {0}) closing session. Client socket read error {1}", session_id_, ec.message() );
 
                                              // Most probably client closed socket. Let's close both sockets and exit session.
                                              in_socket_.close();
@@ -338,12 +337,12 @@ private:
                                               // std::ostringstream what;
                                               // what << "<-- " << std::to_string( length ) << " bytes";
                                               //  write_log( 0, 2, verbose_, session_id_, what.str() );
-                                              spdlog::info( "(session: {0}) <-- {1} bytes", session_id_, length );
+                                              spdlog::debug( "(session: {0}) <-- {1} bytes", session_id_, length );
 
                                               do_write( 2, length );
                                           } else // if (ec != asio::error::eof)
                                           {
-                                              spdlog::error( "(session: {0}) closing session. Remote socket read error {1}", session_id_, ec.message() );
+                                              spdlog::warn( "(session: {0}) closing session. Remote socket read error {1}", session_id_, ec.message() );
                                               // write_log( 2, 1, verbose_, session_id_, "closing session. Remote socket read error", ec.message() );
 
                                               // Most probably remote server closed socket. Let's close both sockets and exit session.
@@ -363,7 +362,7 @@ private:
                                   if( !ec )
                                       do_read( direction );
                                   else {
-                                      spdlog::error( "(session: {0}) closing session. Client socket write error {1}", session_id_, ec.message() );
+                                      spdlog::warn( "(session: {0}) closing session. Client socket write error {1}", session_id_, ec.message() );
                                       // write_log( 2, 1, verbose_, session_id_, "closing session. Client socket write error", ec.message() );
 
                                       // Most probably client closed socket. Let's close both sockets and exit session.
@@ -378,7 +377,7 @@ private:
                                   if( !ec )
                                       do_read( direction );
                                   else {
-                                      spdlog::error( "(session: {0}) closing session. Remote socket write error {1}", session_id_, ec.message() );
+                                      spdlog::warn( "(session: {0}) closing session. Remote socket write error {1}", session_id_, ec.message() );
                                       // write_log( 2, 1, verbose_, session_id_, "closing session. Remote socket write error", ec.message() );
 
                                       // Most probably remote server closed socket. Let's close both sockets and exit session.
@@ -399,14 +398,13 @@ private:
     std::vector<char> in_buf_;
     std::vector<char> out_buf_;
     int session_id_;
-    short verbose_;
 };
 
 class Server {
 public:
-    Server( asio::io_context& io_context, short port, unsigned buffer_size, short verbose )
+    Server( asio::io_context& io_context, short port, unsigned buffer_size )
         : acceptor_( io_context, tcp::endpoint( tcp::v4(), port ) ),
-        in_socket_( io_context ), buffer_size_( buffer_size ), verbose_( verbose ), session_id_( 0 ) {
+        in_socket_( io_context ), buffer_size_( buffer_size ), session_id_( 0 ) {
         do_accept();
     }
 
@@ -415,7 +413,7 @@ private:
         acceptor_.async_accept( in_socket_,
                                [this]( std::error_code ec ) {
                                    if( !ec ) {
-                                       std::make_shared<Session>( std::move( in_socket_ ), session_id_++, buffer_size_, verbose_ )->start();
+                                       std::make_shared<Session>( std::move( in_socket_ ), session_id_++, buffer_size_ )->start();
                                    } else
                                        // write_log( 1, 0, verbose_, session_id_, "socket accept error", ec.message() );
                                        spdlog::error( "(session: {0}) socket accept error {1}", session_id_, ec.message() );
@@ -427,7 +425,6 @@ private:
     tcp::acceptor acceptor_;
     tcp::socket in_socket_;
     size_t buffer_size_;
-    short verbose_;
     unsigned session_id_;
 };
 
@@ -438,7 +435,7 @@ int main( int argc, char* argv[] ) {
 
     // std::cout << argv[0] << " " << VER_FILEVERSION_STR << std::endl;
 
-    short verbose = 0;
+    // short verbose = 0;
     try {
         if( argc != 2 ) {
             std::cout << "Usage: " << argv[0] << " <config_file>" << std::endl;
@@ -450,10 +447,13 @@ int main( int argc, char* argv[] ) {
 
         short port = conf.check_key( "port" ) ? std::atoi( conf.get_key_value( "port" ) ) : 1080;						// Default port_
         size_t buffer_size = conf.check_key( "buffer_size" ) ? std::atoi( conf.get_key_value( "buffer_size" ) ) : 8192; // Default buffer_size
-        verbose = conf.check_key( "verbose" ) ? std::atoi( conf.get_key_value( "verbose" ) ) : 0;						// Default verbose_
+        // verbose = conf.check_key( "verbose" ) ? std::atoi( conf.get_key_value( "verbose" ) ) : 0;						// Default verbose_
+        auto log_level = conf.check_key( "log_level" ) ? spdlog::level::from_str( conf.get_key_value( "log_level" ) ) : spdlog::level::info;
+
+        spdlog::set_level( log_level );
 
         asio::io_context io_context;
-        Server server( io_context, port, buffer_size, verbose );
+        Server server( io_context, port, buffer_size );
         io_context.run();
     } catch( std::exception& e ) {
         spdlog::critical( "Exception caught in {0}: {1}", __FUNCTION__, e.what() );

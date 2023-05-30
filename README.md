@@ -16,14 +16,14 @@ g++ -Wall -std=c++11 boost_socks5.cpp -o boost_socks5 -lboost_system -lboost_thr
 #### To build on Windows (mingw-w64)
 Run the following command:
 ```bash
-g++ -Wall -std=c++11 -I <i>&lt;Path_to_Boost_Include&gt;</i> boost_socks5.cpp -o boost_socks5 -static -L <i>&lt;Path_to_Boost_Libs&gt;</i> -lboost_system -lboost_thread -lwsock32 -lws2_32
+g++ -Wall -std=c++11 -I <Path_to_Boost_Include> boost_socks5.cpp -o boost_socks5 -static -L <Path_to_Boost_Libs> -lboost_system -lboost_thread -lwsock32 -lws2_32
 ```
 Ignore Boost std::auto_ptr warnings if any.
 
 #### To build on Windows (MS Visual Studio)
 Run ‘Developer Command Prompt for VS2015’ and use the following command:
 ```bat
-cl /EHsc /MD /I <i>&lt;Path_to_Boost_Include&gt;</i> /Feboost_socks5.exe boost_socks5.cpp /link /LIBPATH:<i>&lt;Path_to_Boost_Libs&gt;</i>
+cl /EHsc /MD /I <Path_to_Boost_Include> /Feboost_socks5.exe boost_socks5.cpp /link /LIBPATH:<Path_to_Boost_Libs>
 ```
 
 ## Config file

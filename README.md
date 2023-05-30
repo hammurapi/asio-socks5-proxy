@@ -30,3 +30,12 @@ Currently, configuration file contains the following settings:
 * port – which the server listens for incoming client connections 
 * buffer_size – size of data transferring buffers. Do not make this value too small because it will greatly increase the number of read/write calls when forwarding huge amount of data
 * verbose - verbosity level (0 – errors only, 1 - connect/disconnect, 2 - traffic packets size)
+* 
+
+## Testing
+
+Setup chrome to use the socks proxy from localhost
+
+```bat
+"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --proxy-server="socks5://localhost:1088"
+```

@@ -2,6 +2,7 @@
  * @file config_reader.hpp
  * @brief Reads configuration file (like standard Linux .conf files)
  * @author philave (philave7@gmail.com)
+ * @author hammurapi (https://github.com/hammurapi)
  */
 
 #ifndef CONFIG_READER_HPP

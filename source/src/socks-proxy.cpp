@@ -2,6 +2,7 @@
  * @file boost_socks5.cpp
  * @brief Simple SOCKS5 proxy server realization using asio library
  * @author philave (philave7@gmail.com)
+ * @author hammurapi (https://github.com/hammurapi)
  */
 
 #include <asio.hpp>
@@ -18,33 +19,6 @@
 #include "version.h"
 
 using asio::ip::tcp;
-
-#ifdef __LUINEVER__
-// Common log function
-inline void write_log( int prefix, short verbose, short verbose_level, int session_id, const std::string& what, const std::string& error_message = "" ) {
-    if( verbose > verbose_level )
-        return;
-
-    std::string session = "";
-    if( session_id >= 0 ) {
-        session += "session(";
-        session += std::to_string( session_id );
-        session += "): ";
-    }
-
-    if( prefix > 0 ) {
-        std::cerr << ( prefix == 1 ? "Error: " : "Warning: " ) << session << what;
-        if( error_message.size() > 0 )
-            std::cerr << ": " << error_message;
-        std::cerr << std::endl;
-    } else {
-        std::cout << session << what;
-        if( error_message.size() > 0 )
-            std::cout << ": " << error_message;
-        std::cout << std::endl;
-    }
-}
-#endif
 
 class Session : public std::enable_shared_from_this<Session> {
 public:

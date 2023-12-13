@@ -263,7 +263,7 @@ private:
         in_buf_[1] = 0x00;
         in_buf_[2] = 0x00;
         in_buf_[3] = 0x01;
-        uint32_t realRemoteIP = out_socket_.remote_endpoint().address().to_v4().to_uint();
+		uint32_t realRemoteIP = htonl( out_socket_.remote_endpoint().address().to_v4().to_uint() );
         uint16_t realRemoteport = htons( out_socket_.remote_endpoint().port() );
 
         std::memcpy( &in_buf_[4], &realRemoteIP, 4 );

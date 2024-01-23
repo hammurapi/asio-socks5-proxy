@@ -36,7 +36,7 @@ A completion handler function object:
 
 A lambda as a completion handler:
 
-  my_io_context.post(
+  my_io_service.post(
       []()
       {
         ...
@@ -50,7 +50,7 @@ A non-static class member function adapted to a completion handler using
     ...
   }
   ...
-  my_io_context.post(std::bind(&my_class::completion_handler, this));
+  my_io_service.post(std::bind(&my_class::completion_handler, this));
 
 A non-static class member function adapted to a completion handler using
 `boost::bind()`:
@@ -60,6 +60,6 @@ A non-static class member function adapted to a completion handler using
     ...
   }
   ...
-  my_io_context.post(boost::bind(&my_class::completion_handler, this));
+  my_io_service.post(boost::bind(&my_class::completion_handler, this));
 
 [endsect]

@@ -4,6 +4,7 @@ use strict;
 use File::Path;
 
 our $boost_dir = "boostified";
+our $bad_lines = 0;
 
 sub print_line
 {
@@ -14,6 +15,7 @@ sub print_line
   {
     if ($from =~ /\.[chi]pp$/)
     {
+      ++$bad_lines;
       print("Warning: $from:$lineno: output >80 characters wide.\n");
     }
   }
@@ -126,8 +128,8 @@ sub copy_source_file
     $line =~ s/[\\@]ref boost_bind/boost::bind()/g;
     if ($from =~ /.*\.txt$/)
     {
-      $line =~ s/[\\@]ref async_read/asio::async_read()/g;
-      $line =~ s/[\\@]ref async_write/asio::async_write()/g;
+      $line =~ s/[\\@]ref async_read/boost::asio::async_read()/g;
+      $line =~ s/[\\@]ref async_write/boost::asio::async_write()/g;
     }
     if ($line =~ /asio_detail_posix_thread_function/)
     {
@@ -158,6 +160,7 @@ sub copy_source_file
       $line =~ s/changes made in each release/changes made in each Boost release/g;
       $line =~ s/\[\$/[\$boost_asio\//g;
       $line =~ s/\[@\.\.\/src\/examples/[\@boost_asio\/example/g;
+      $line =~ s/asio\//boost\/asio\//g if $is_xsl;
       $line =~ s/include\/asio/boost\/asio/g;
       $line =~ s/\^asio/^boost\/asio/g;
       $line =~ s/namespaceasio/namespaceboost_1_1asio/g;
@@ -182,7 +185,7 @@ sub copy_source_file
     {
       if ($is_qbk)
       {
-        print_line($output, $1 . "} } // namespace asio", $from, $lineno);
+        print_line($output, $1 . "} } // namespace boost::asio", $from, $lineno);
       }
       else
       {
@@ -264,9 +267,9 @@ sub copy_source_file
       {
         $line =~ s/asio::thread/boost::thread/g;
       }
-      if (!($line =~ /asio::/))
+      if (!($line =~ /boost::asio::/))
       {
-        $line =~ s/asio::/asio::/g;
+        $line =~ s/asio::/boost::asio::/g;
       }
       print_line($output, $line, $from, $lineno);
     }
@@ -274,7 +277,7 @@ sub copy_source_file
     {
       if ($is_test)
       {
-        print_line($output, $1 . "asio::detail::thread" . $2, $from, $lineno);
+        print_line($output, $1 . "boost::asio::detail::thread" . $2, $from, $lineno);
       }
       else
       {
@@ -288,13 +291,13 @@ sub copy_source_file
     }
     elsif ($line =~ /std::error_code/)
     {
-      $line =~ s/std::error_code/std::error_code/g;
-      $line =~ s/asio::/asio::/g if !$is_xsl;
+      $line =~ s/std::error_code/boost::system::error_code/g;
+      $line =~ s/asio::/boost::asio::/g if !$is_xsl;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /ec\.assign\(0, ec\.category\(\)\)/)
     {
-      $line =~ s/ec\.assign\(0, ec\.category\(\)\)/ec = std::error_code()/g;
+      $line =~ s/ec\.assign\(0, ec\.category\(\)\)/ec = boost::system::error_code()/g;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /^} \/\/ namespace std/ && !$is_coroutine_related && !$is_hash_related)
@@ -302,18 +305,18 @@ sub copy_source_file
       print_line($output, "} // namespace system", $from, $lineno);
       print_line($output, "} // namespace boost", $from, $lineno);
     }
-    elsif ($line =~ /asio::/ && !($line =~ /asio::/))
+    elsif ($line =~ /asio::/ && !($line =~ /boost::asio::/))
     {
-      $line =~ s/asio::error_code/std::error_code/g;
+      $line =~ s/asio::error_code/boost::system::error_code/g;
       $line =~ s/asio::error_category/boost::system::error_category/g;
       $line =~ s/asio::system_category/boost::system::system_category/g;
       $line =~ s/asio::system_error/boost::system::system_error/g;
-      $line =~ s/asio::/asio::/g if !$is_xsl;
+      $line =~ s/asio::/boost::asio::/g if !$is_xsl;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /using namespace asio/)
     {
-      $line =~ s/using namespace asio/using namespace asio/g;
+      $line =~ s/using namespace asio/using namespace boost::asio/g;
       print_line($output, $line, $from, $lineno);
     }
     elsif ($line =~ /asio_handler_alloc_helpers/)
@@ -616,6 +619,7 @@ sub copy_examples
       "src/examples/cpp11/timers",
       "src/examples/cpp11/type_erasure",
       "src/examples/cpp14/deferred",
+      "src/examples/cpp14/echo",
       "src/examples/cpp14/executors",
       "src/examples/cpp14/iostreams",
       "src/examples/cpp14/operations",
@@ -623,6 +627,7 @@ sub copy_examples
       "src/examples/cpp17/coroutines_ts",
       "src/examples/cpp20/channels",
       "src/examples/cpp20/coroutines",
+      "src/examples/cpp20/invocation",
       "src/examples/cpp20/operations",
       "src/examples/cpp20/type_erasure");
 
@@ -684,11 +689,22 @@ sub copy_tools
   }
 }
 
+my $includes_only = 0;
+if (scalar(@ARGV) == 1 && $ARGV[0] eq "--includes-only")
+{
+  $includes_only = 1;
+}
+
 copy_include_files();
-create_lib_directory();
-copy_unit_tests();
-copy_latency_tests();
-copy_properties_tests();
-copy_examples();
-copy_doc();
-copy_tools();
+if (not $includes_only)
+{
+  create_lib_directory();
+  copy_unit_tests();
+  copy_latency_tests();
+  copy_properties_tests();
+  copy_examples();
+  copy_doc();
+  copy_tools();
+}
+
+exit($bad_lines > 0 ? 1 : 0);

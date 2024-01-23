@@ -22,7 +22,6 @@
 
 namespace asio {
 
-#if defined(ASIO_HAS_MOVE)
 namespace detail
 {
   // Type trait used to determine whether a service supports move.
@@ -34,25 +33,24 @@ namespace detail
     typedef typename service_type::implementation_type implementation_type;
 
     template <typename T, typename U>
-    static auto asio_context_has_move_eval(T* t, U* u)
+    static auto asio_service_has_move_eval(T* t, U* u)
       -> decltype(t->move_construct(*u, *u), char());
-    static char (&asio_context_has_move_eval(...))[2];
+    static char (&asio_service_has_move_eval(...))[2];
 
   public:
     static const bool value =
-      sizeof(asio_context_has_move_eval(
+      sizeof(asio_service_has_move_eval(
         static_cast<service_type*>(0),
         static_cast<implementation_type*>(0))) == 1;
   };
 }
-#endif // defined(ASIO_HAS_MOVE)
 
 /// Base class for all I/O objects.
 /**
  * @note All I/O objects are non-copyable. However, when using C++0x, certain
  * I/O objects do support move construction and move assignment.
  */
-#if !defined(ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
+#if defined(GENERATING_DOCUMENTATION)
 template <typename IoObjectService>
 #else
 template <typename IoObjectService,
@@ -91,7 +89,7 @@ public:
    * @return A reference to the io_context object that the I/O object will use
    * to dispatch handlers. Ownership is not transferred to the caller.
    */
-  asio::io_context& get_io_context()
+  asio::io_context& get_io_service()
   {
     return service_.get_io_context();
   }
@@ -101,7 +99,7 @@ public:
   typedef asio::io_context::executor_type executor_type;
 
   /// Get the executor associated with the object.
-  executor_type get_executor() ASIO_NOEXCEPT
+  executor_type get_executor() noexcept
   {
     return service_.get_io_context().get_executor();
   }
@@ -190,7 +188,6 @@ private:
   implementation_type implementation_;
 };
 
-#if defined(ASIO_HAS_MOVE)
 // Specialisation for movable objects.
 template <typename IoObjectService>
 class basic_io_object<IoObjectService, true>
@@ -205,7 +202,7 @@ public:
     return service_->get_io_context();
   }
 
-  asio::io_context& get_io_context()
+  asio::io_context& get_io_service()
   {
     return service_->get_io_context();
   }
@@ -213,7 +210,7 @@ public:
 
   typedef asio::io_context::executor_type executor_type;
 
-  executor_type get_executor() ASIO_NOEXCEPT
+  executor_type get_executor() noexcept
   {
     return service_->get_io_context().get_executor();
   }
@@ -281,7 +278,6 @@ private:
   IoObjectService* service_;
   implementation_type implementation_;
 };
-#endif // defined(ASIO_HAS_MOVE)
 
 } // namespace asio
 

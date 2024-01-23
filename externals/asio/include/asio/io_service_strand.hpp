@@ -1,5 +1,5 @@
 //
-// io_context_strand.hpp
+// io_service_strand.hpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_io_context_STRAND_HPP
-#define ASIO_io_context_STRAND_HPP
+#ifndef ASIO_IO_SERVICE_STRAND_HPP
+#define ASIO_IO_SERVICE_STRAND_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -17,4 +17,4 @@
 
 #include "asio/io_context_strand.hpp"
 
-#endif // ASIO_io_context_STRAND_HPP
+#endif // ASIO_IO_SERVICE_STRAND_HPP

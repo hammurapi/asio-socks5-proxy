@@ -1,5 +1,5 @@
 //
-// io_context.hpp
+// io_service.hpp
 // ~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef ASIO_io_context_HPP
-#define ASIO_io_context_HPP
+#ifndef ASIO_IO_SERVICE_HPP
+#define ASIO_IO_SERVICE_HPP
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -23,11 +23,11 @@ namespace asio {
 
 #if !defined(ASIO_NO_DEPRECATED)
 /// Typedef for backwards compatibility.
-typedef io_context io_context;
+typedef io_context io_service;
 #endif // !defined(ASIO_NO_DEPRECATED)
 
 } // namespace asio
 
 #include "asio/detail/pop_options.hpp"
 
-#endif // ASIO_io_context_HPP
+#endif // ASIO_IO_SERVICE_HPP

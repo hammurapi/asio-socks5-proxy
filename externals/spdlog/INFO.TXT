@@ -4,7 +4,7 @@ https://github.com/gabime/spdlog
 
 Version
 -------
-1.11.0 (https://github.com/gabime/spdlog/archive/refs/tags/v1.11.0.zip)
+1.13.0 (https://github.com/gabime/spdlog/archive/refs/tags/v1.13.0.zip)
 
 
 License

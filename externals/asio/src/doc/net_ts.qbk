@@ -33,26 +33,26 @@ below shows the new Networking TS interfaces and the facilities they replace:
   [[New interface][Old interface][Notes]]
   [
     [[link asio.reference.io_context `io_context`]]
-    [[link asio.reference.io_context `io_context`]]
-    [The name `io_context` is retained as a typedef.]
+    [[link asio.reference.io_service `io_service`]]
+    [The name `io_service` is retained as a typedef.]
   ]
   [
     [[link asio.reference.dispatch `dispatch`]]
-    [[link asio.reference.io_context.dispatch `io_context::dispatch`]]
+    [[link asio.reference.io_context.dispatch `io_service::dispatch`]]
     [The `dispatch` free function can be used to submit functions to any [link
     asio.reference.Executor1 Executor] or [link asio.reference.ExecutionContext
     ExecutionContext].]
   ]
   [
     [[link asio.reference.post `post`]]
-    [[link asio.reference.io_context.post `io_context::post`]]
+    [[link asio.reference.io_context.post `io_service::post`]]
     [The `post` free function can be used to submit functions to any [link
     asio.reference.Executor1 Executor] or [link asio.reference.ExecutionContext
     ExecutionContext].]
   ]
   [
     [[link asio.reference.defer `defer`]]
-    [[link asio.reference.io_context.post `io_context::post`] when the [link
+    [[link asio.reference.io_context.post `io_service::post`] when the [link
     asio.reference.asio_handler_is_continuation `asio_handler_is_continuation`]
     hook returns true]
     [The `defer` free function can be used to submit functions to any [link
@@ -61,25 +61,25 @@ below shows the new Networking TS interfaces and the facilities they replace:
   ]
   [
     [[link asio.reference.io_context.poll `io_context::poll`]]
-    [[link asio.reference.io_context.poll `io_context::poll`] overload that
+    [[link asio.reference.io_context.poll `io_service::poll`] overload that
     takes `error_code&`]
     [The `error_code` overload is not required.]
   ]
   [
     [[link asio.reference.io_context.poll_one `io_context::poll_one`]]
-    [[link asio.reference.io_context.poll_one `io_context::poll_one`] overload
+    [[link asio.reference.io_context.poll_one `io_service::poll_one`] overload
     that takes `error_code&`]
     [The `error_code` overload is not required.]
   ]
   [
     [[link asio.reference.io_context.run `io_context::run`]]
-    [[link asio.reference.io_context.run `io_context::run`] overload that takes
+    [[link asio.reference.io_context.run `io_service::run`] overload that takes
     `error_code&`]
     [The `error_code` overload is not required.]
   ]
   [
     [[link asio.reference.io_context.run_one `io_context::run_one`]]
-    [[link asio.reference.io_context.run_one `io_context::run_one`] overload
+    [[link asio.reference.io_context.run_one `io_service::run_one`] overload
     that takes `error_code&`]
     [The `error_code` overload is not required.]
   ]
@@ -93,7 +93,7 @@ below shows the new Networking TS interfaces and the facilities they replace:
   ]
   [
     [[link asio.reference.io_context.restart `io_context::restart`]]
-    [[link asio.reference.io_context.reset `io_context::reset`]]
+    [[link asio.reference.io_context.reset `io_service::reset`]]
     []
   ]
   [
@@ -107,9 +107,9 @@ below shows the new Networking TS interfaces and the facilities they replace:
     [[link asio.reference.execution_context `execution_context`], [link
     asio.reference.execution_context__service `execution_context::service`],
     and [link asio.reference.execution_context__id `execution_context::id`]]
-    [[link asio.reference.io_context `io_context`], [link
-    asio.reference.io_context__service `io_context::service`], and [link
-    asio.reference.execution_context__id `io_context::id`]]
+    [[link asio.reference.io_context `io_service`], [link
+    asio.reference.io_context__service `io_service::service`], and [link
+    asio.reference.execution_context__id `io_service::id`]]
     [The service-related functionality has been moved to the
     `execution_context` base class. This may also be used as a base for
     creating custom execution contexts.]
@@ -121,22 +121,22 @@ below shows the new Networking TS interfaces and the facilities they replace:
   ]
   [
     [[link asio.reference.strand `strand`]]
-    [[link asio.reference.io_context__strand `io_context::strand`]]
+    [[link asio.reference.io_context__strand `io_service::strand`]]
     [This template works with any valid executor, and is itself a valid
     executor.]
   ]
   [
     [[link asio.reference.executor_work_guard `executor_work_guard`] and [link
     asio.reference.make_work_guard `make_work_guard`]]
-    [[link asio.reference.io_context__work `io_context::work`]]
+    [[link asio.reference.io_context__work `io_service::work`]]
     [Work tracking is now covered by the [link asio.reference.Executor1
     Executor] requirements. These templates work with any valid executor.]
   ]
   [
     [[link asio.reference.executor_binder `executor_binder`] and [link
     asio.reference.bind_executor `bind_executor`]]
-    [[link asio.reference.io_context.wrap `io_context::wrap`] and
-    [link asio.reference.io_context__strand.wrap `io_context::strand::wrap`]]
+    [[link asio.reference.io_context.wrap `io_service::wrap`] and
+    [link asio.reference.io_context__strand.wrap `io_service::strand::wrap`]]
     [These templates work with any valid executor.]
   ]
   [
@@ -193,8 +193,8 @@ below shows the new Networking TS interfaces and the facilities they replace:
     [[link asio.reference.basic_socket.get_executor
     `basic_socket::get_executor`] (and corresponding member for I/O objects
     such as timers, serial ports, etc.)]
-    [[link asio.reference.basic_io_object.get_io_context
-    `basic_io_object::get_io_context`]]
+    [[link asio.reference.basic_io_object.get_io_service
+    `basic_io_object::get_io_service`]]
     [Use `get_executor().context()` to obtain the associated `io_context`.]
   ]
   [

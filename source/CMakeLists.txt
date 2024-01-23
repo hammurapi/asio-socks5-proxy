@@ -16,7 +16,7 @@ else()
 	message( SEND_ERROR "unsuported platform!" )
 endif()
 
-set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 17)
 
 #However, the file(GLOB...) allows for wildcard additions:
 file( GLOB COMMON_SOURCES "src/*.cpp" "src/*.hpp" )

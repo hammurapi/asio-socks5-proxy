@@ -329,8 +329,12 @@ class Session : public std::enable_shared_from_this<Session> {
 											  do_write( 1, length );
 										  } else // if (ec != asio::error::eof)
 										  {
-											  // write_log( 2, 1, verbose_, session_id_, "closing session. Client socket read error", ec.message() );
-											  spdlog::warn( "(session: {0}) closing session. Client socket read error {1}", session_id_, ec.message() );
+											  if( ec == asio::error::eof ) {
+												  spdlog::info( "(session: {0}) closing session. Client socket read error {1}", session_id_, ec.message() );
+											  } else {
+												  // write_log( 2, 1, verbose_, session_id_, "closing session. Client socket read error", ec.message() );
+												  spdlog::warn( "(session: {0}) closing session. Client socket read error {1}", session_id_, ec.message() );
+											  }
 
 											  // Most probably client closed socket. Let's close both sockets and exit session.
 											  in_socket_.close();

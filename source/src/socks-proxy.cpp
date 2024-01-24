@@ -168,10 +168,21 @@ class Session : public std::enable_shared_from_this<Session> {
 												  remote_host_ = std::string( &in_buf_[5], host_length );
 												  remote_port_ = std::to_string( ntohs( *( (uint16_t*) &in_buf_[5 + host_length] ) ) );
 												  break;
+											  case 0x04: // IP V6 addres
+												  if( length != 22 ) {
+													  // write_log( 1, 0, verbose_, session_id_, "SOCKS5 request length is invalid. Closing session." );
+													  spdlog::error( "(session: {0}) SOCKS5 request length is invalid. Closing session.", session_id_ );
+													  return;
+												  }
+
+												  remote_host_ = asio::ip::address_v6(*reinterpret_cast<asio::ip::address_v6::bytes_type*>(&in_buf_[4])).to_string();
+												  // remote_host_ = asio::ip::address_v4( ntohl( *( (uint32_t*) &in_buf_[4] ) ) ).to_string();
+												  remote_port_ = std::to_string( ntohs( *( (uint16_t*) &in_buf_[8] ) ) );
+												  break;
 											  default:
 												  // write_log( 1, 0, verbose_, session_id_, "unsupport_ed address type in SOCKS5 request. Closing session." );
 
-												  spdlog::error( "(session: {0}) unsupport_ed address type in SOCKS5 request. Closing session.", session_id_ );
+												  spdlog::error( "(session: {0}) unsupport_ed address type in SOCKS5 request (addr_type={1}). Closing session.", session_id_, addr_type );
 												  break;
 										  }
 
@@ -195,7 +206,7 @@ class Session : public std::enable_shared_from_this<Session> {
 										// what << "failed to resolve " << remote_host_ << ":" << remote_port_;
 										// write_log( 1, 0, verbose_, session_id_, what.str(), ec.message() );
 
-										spdlog::error( "(session: {0}) failed to resolve {1}:{2}", session_id_, remote_host_, remote_port_ );
+										spdlog::error( "(session: {0}) failed to resolve {1}:{2} : {3}", session_id_, remote_host_, remote_port_, ec.message() );
 									}
 								} );
 	}
@@ -215,7 +226,7 @@ class Session : public std::enable_shared_from_this<Session> {
 									 // std::ostringstream what;
 									 // what << "failed to connect " << remote_host_ << ":" << remote_port_;
 									 // write_log( 1, 0, verbose_, session_id_, what.str(), ec.message() );
-									 spdlog::error( "(session: {0}) failed to connect {1}:{2}", session_id_, remote_host_, remote_port_ );
+									 spdlog::error( "(session: {0}) failed to connect {1}:{2} : {3}", session_id_, remote_host_, remote_port_, ec.message() );
 								 }
 							 } );
 	}

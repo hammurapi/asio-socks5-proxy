@@ -149,7 +149,7 @@ class Session : public std::enable_shared_from_this<Session> {
 										  uint8_t addr_type = in_buf_[3], host_length;
 
 										  switch( addr_type ) {
-											  case 0x01: // IP V4 addres
+											  case 0x01: // IP V4 address
 												  if( length != 10 ) {
 													  // write_log( 1, 0, verbose_, session_id_, "SOCKS5 request length is invalid. Closing session." );
 													  spdlog::error( "(session: {0}) SOCKS5 request length is invalid. Closing session.", session_id_ );
@@ -168,21 +168,21 @@ class Session : public std::enable_shared_from_this<Session> {
 												  remote_host_ = std::string( &in_buf_[5], host_length );
 												  remote_port_ = std::to_string( ntohs( *( (uint16_t*) &in_buf_[5 + host_length] ) ) );
 												  break;
-											  case 0x04: // IP V6 addres
+											  case 0x04: // IP V6 address
 												  if( length != 22 ) {
 													  // write_log( 1, 0, verbose_, session_id_, "SOCKS5 request length is invalid. Closing session." );
 													  spdlog::error( "(session: {0}) SOCKS5 request length is invalid. Closing session.", session_id_ );
 													  return;
 												  }
 
-												  remote_host_ = asio::ip::address_v6(*reinterpret_cast<asio::ip::address_v6::bytes_type*>(&in_buf_[4])).to_string();
+												  remote_host_ = asio::ip::address_v6( *reinterpret_cast<asio::ip::address_v6::bytes_type*>( &in_buf_[4] ) ).to_string();
 												  // remote_host_ = asio::ip::address_v4( ntohl( *( (uint32_t*) &in_buf_[4] ) ) ).to_string();
-												  remote_port_ = std::to_string( ntohs( *( (uint16_t*) &in_buf_[8] ) ) );
+												  remote_port_ = std::to_string( ntohs( *( (uint16_t*) &in_buf_[20] ) ) );
 												  break;
 											  default:
 												  // write_log( 1, 0, verbose_, session_id_, "unsupport_ed address type in SOCKS5 request. Closing session." );
 
-												  spdlog::error( "(session: {0}) unsupport_ed address type in SOCKS5 request (addr_type={1}). Closing session.", session_id_, addr_type );
+												  spdlog::error( "(session: {0}) unsupported address type in SOCKS5 request (addr_type={1}). Closing session.", session_id_, addr_type );
 												  break;
 										  }
 
@@ -270,17 +270,40 @@ class Session : public std::enable_shared_from_this<Session> {
 
 		Fields marked RESERVED (RSV) must be set to X'00'.
 		*/
+
+		size_t length;
+		
 		in_buf_[0] = 0x05;
 		in_buf_[1] = 0x00;
 		in_buf_[2] = 0x00;
-		in_buf_[3] = 0x01;
-		uint32_t realRemoteIP = htonl( out_socket_.remote_endpoint().address().to_v4().to_uint() );
-		uint16_t realRemoteport = htons( out_socket_.remote_endpoint().port() );
+		if( out_socket_.remote_endpoint().protocol() == asio::ip::tcp::v4() ) {
+			in_buf_[3] = 0x01;		// IP V4 address: X'01'
 
-		std::memcpy( &in_buf_[4], &realRemoteIP, 4 );
-		std::memcpy( &in_buf_[8], &realRemoteport, 2 );
+			uint32_t realRemoteIP = htonl( out_socket_.remote_endpoint().address().to_v4().to_uint() );
+			uint16_t realRemoteport = htons( out_socket_.remote_endpoint().port() );
 
-		asio::async_write( in_socket_, asio::buffer( in_buf_, 10 ), // Always 10-byte according to RFC1928
+			std::memcpy( &in_buf_[4], &realRemoteIP, 4 );
+			std::memcpy( &in_buf_[8], &realRemoteport, 2 );
+
+			length = 10;
+		} else if( out_socket_.remote_endpoint().protocol() == asio::ip::tcp::v6() ) {
+			in_buf_[3] = 0x04; // IP V6 address: X'04'
+
+			auto realRemoteIP = out_socket_.remote_endpoint().address().to_v6().to_bytes();			
+			uint16_t realRemoteport = htons( out_socket_.remote_endpoint().port() );
+
+			std::memcpy( &in_buf_[4], &realRemoteIP, 16 );
+			std::memcpy( &in_buf_[20], &realRemoteport, 2 );
+
+			length = 22;
+		} else {
+			// write_log( 1, 0, verbose_, session_id_, "unsupported address type in SOCKS5 request. Closing session." );
+
+			spdlog::error( "(session: {0}) unsupported protocol type in SOCKS5 request (protocol={1}). Closing session.", session_id_, out_socket_.remote_endpoint().protocol().type() );
+			return;
+		}
+
+		asio::async_write( in_socket_, asio::buffer( in_buf_, length ), // Always 10-byte according to RFC1928
 						   [this, self]( std::error_code ec, std::size_t length ) {
 							   if( !ec ) {
 								   do_read( 3 ); // Read both sockets
@@ -327,7 +350,11 @@ class Session : public std::enable_shared_from_this<Session> {
 											   do_write( 2, length );
 										   } else // if (ec != asio::error::eof)
 										   {
-											   spdlog::warn( "(session: {0}) closing session. Remote socket read error {1}", session_id_, ec.message() );
+											   if( ec == asio::error::eof ) {
+												   spdlog::info( "(session: {0}) closing session. Remote socket read error {1}", session_id_, ec.message() );
+											   } else {
+												   spdlog::warn( "(session: {0}) closing session. Remote socket read error {1}", session_id_, ec.message() );
+											   }
 											   // write_log( 2, 1, verbose_, session_id_, "closing session. Remote socket read error", ec.message() );
 
 											   // Most probably remote server closed socket. Let's close both sockets and exit session.
@@ -347,7 +374,11 @@ class Session : public std::enable_shared_from_this<Session> {
 									   if( !ec )
 										   do_read( direction );
 									   else {
-										   spdlog::warn( "(session: {0}) closing session. Client socket write error {1}", session_id_, ec.message() );
+										   if( ec == asio::error::eof ) {
+											   spdlog::info( "(session: {0}) closing session. Client socket write error {1}", session_id_, ec.message() );
+										   } else {
+											   spdlog::warn( "(session: {0}) closing session. Client socket write error {1}", session_id_, ec.message() );
+										   }
 										   // write_log( 2, 1, verbose_, session_id_, "closing session. Client socket write error", ec.message() );
 
 										   // Most probably client closed socket. Let's close both sockets and exit session.

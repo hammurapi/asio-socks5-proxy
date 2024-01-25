@@ -422,7 +422,7 @@ class Session : public std::enable_shared_from_this<Session> {
 
 class Server {
   public:
-	Server( asio::io_context& io_context, short port, unsigned buffer_size )
+	Server( asio::io_context& io_context, short port, size_t buffer_size )
 		: acceptor_( io_context, tcp::endpoint( tcp::v4(), port ) ),
 		  in_socket_( io_context ), buffer_size_( buffer_size ), session_id_( 0 ) {
 		spdlog::info( "accepting connections on {}:{}",

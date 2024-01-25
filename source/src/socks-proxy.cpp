@@ -272,12 +272,12 @@ class Session : public std::enable_shared_from_this<Session> {
 		*/
 
 		size_t length;
-		
+
 		in_buf_[0] = 0x05;
 		in_buf_[1] = 0x00;
 		in_buf_[2] = 0x00;
 		if( out_socket_.remote_endpoint().protocol() == asio::ip::tcp::v4() ) {
-			in_buf_[3] = 0x01;		// IP V4 address: X'01'
+			in_buf_[3] = 0x01; // IP V4 address: X'01'
 
 			uint32_t realRemoteIP = htonl( out_socket_.remote_endpoint().address().to_v4().to_uint() );
 			uint16_t realRemoteport = htons( out_socket_.remote_endpoint().port() );
@@ -289,7 +289,7 @@ class Session : public std::enable_shared_from_this<Session> {
 		} else if( out_socket_.remote_endpoint().protocol() == asio::ip::tcp::v6() ) {
 			in_buf_[3] = 0x04; // IP V6 address: X'04'
 
-			auto realRemoteIP = out_socket_.remote_endpoint().address().to_v6().to_bytes();			
+			auto realRemoteIP = out_socket_.remote_endpoint().address().to_v6().to_bytes();
 			uint16_t realRemoteport = htons( out_socket_.remote_endpoint().port() );
 
 			std::memcpy( &in_buf_[4], &realRemoteIP, 16 );
@@ -336,9 +336,12 @@ class Session : public std::enable_shared_from_this<Session> {
 												  spdlog::warn( "(session: {0}) closing session. Client socket read error {1}", session_id_, ec.message() );
 											  }
 
+// Don't close the sockets explicitly let the session dtor object destruct them
+#ifdef __LUINEVER__
 											  // Most probably client closed socket. Let's close both sockets and exit session.
 											  in_socket_.close();
 											  out_socket_.close();
+#endif
 										  }
 									  } );
 
@@ -359,11 +362,14 @@ class Session : public std::enable_shared_from_this<Session> {
 											   } else {
 												   spdlog::warn( "(session: {0}) closing session. Remote socket read error {1}", session_id_, ec.message() );
 											   }
-											   // write_log( 2, 1, verbose_, session_id_, "closing session. Remote socket read error", ec.message() );
+					// write_log( 2, 1, verbose_, session_id_, "closing session. Remote socket read error", ec.message() );
 
+					// Don't close the sockets explicitly let the session dtor object destruct them
+#ifdef __LUINEVER__
 											   // Most probably remote server closed socket. Let's close both sockets and exit session.
 											   in_socket_.close();
 											   out_socket_.close();
+#endif
 										   }
 									   } );
 	}
@@ -383,11 +389,14 @@ class Session : public std::enable_shared_from_this<Session> {
 										   } else {
 											   spdlog::warn( "(session: {0}) closing session. Client socket write error {1}", session_id_, ec.message() );
 										   }
-										   // write_log( 2, 1, verbose_, session_id_, "closing session. Client socket write error", ec.message() );
+						// write_log( 2, 1, verbose_, session_id_, "closing session. Client socket write error", ec.message() );
 
+						// Don't close the sockets explicitly let the session dtor object destruct them
+#ifdef __LUINEVER__
 										   // Most probably client closed socket. Let's close both sockets and exit session.
 										   in_socket_.close();
 										   out_socket_.close();
+#endif
 									   }
 								   } );
 				break;
@@ -398,11 +407,14 @@ class Session : public std::enable_shared_from_this<Session> {
 										   do_read( direction );
 									   else {
 										   spdlog::warn( "(session: {0}) closing session. Remote socket write error {1}", session_id_, ec.message() );
-										   // write_log( 2, 1, verbose_, session_id_, "closing session. Remote socket write error", ec.message() );
+						// write_log( 2, 1, verbose_, session_id_, "closing session. Remote socket write error", ec.message() );
 
+						// Don't close the sockets explicitly let the session dtor object destruct them
+#ifdef __LUINEVER__
 										   // Most probably remote server closed socket. Let's close both sockets and exit session.
 										   in_socket_.close();
 										   out_socket_.close();
+#endif
 									   }
 								   } );
 				break;
